@@ -3,11 +3,13 @@ import { useRef, useState } from 'react';
 import Phaser from 'phaser';
 import { PhaserGame } from './game/PhaserGame';
 
-function App ()
-{
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Terminal } from 'lucide-react';
+
+function App() {
     // The sprite can only be moved in the MainMenu Scene
     const [canMoveSprite, setCanMoveSprite] = useState(true);
-    
+
     //  References to the PhaserGame component (game and scene are exposed)
     const phaserRef = useRef();
     const [spritePosition, setSpritePosition] = useState({ x: 0, y: 0 });
@@ -16,8 +18,7 @@ function App ()
 
         const scene = phaserRef.current.scene;
 
-        if (scene)
-        {
+        if (scene) {
             scene.changeScene();
         }
     }
@@ -26,8 +27,7 @@ function App ()
 
         const scene = phaserRef.current.scene;
 
-        if (scene && scene.scene.key === 'MainMenu')
-        {
+        if (scene && scene.scene.key === 'MainMenu') {
             // Get the update logo position
             scene.moveLogo(({ x, y }) => {
 
@@ -41,8 +41,7 @@ function App ()
 
         const scene = phaserRef.current.scene;
 
-        if (scene)
-        {
+        if (scene) {
             // Add more stars
             const x = Phaser.Math.Between(64, scene.scale.width - 64);
             const y = Phaser.Math.Between(64, scene.scale.height - 64);
@@ -67,11 +66,19 @@ function App ()
     const currentScene = (scene) => {
 
         setCanMoveSprite(scene.scene.key !== 'MainMenu');
-        
+
     }
 
     return (
         <div id="app">
+            <Alert>
+                <Terminal className="h-4 w-4" />
+                <AlertTitle>Heads up!</AlertTitle>
+                <AlertDescription>
+                    You can add components and dependencies to your app using the cli.
+                </AlertDescription>
+            </Alert>
+
             <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
             <div>
                 <div>
