@@ -70,28 +70,29 @@ function App() {
     }
 
     return (
-        <div id="app">
-            <Alert>
-                <Terminal className="h-4 w-4" />
+        <div className="flex flex-col">
+            <Alert className="flex flex-col items-center justify-center bg-black text-white">
+                <Terminal className="h-4 w-4 bg-white" />
                 <AlertTitle>Heads up!</AlertTitle>
                 <AlertDescription>
                     You can add components and dependencies to your app using the cli.
                 </AlertDescription>
             </Alert>
-
-            <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
-            <div>
+            <div className="flex items-center justify-center mt-2">
+                <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
                 <div>
-                    <button className="button" onClick={changeScene}>Change Scene</button>
-                </div>
-                <div>
-                    <button disabled={canMoveSprite} className="button" onClick={moveSprite}>Toggle Movement</button>
-                </div>
-                <div className="spritePosition">Sprite Position:
-                    <pre>{`{\n  x: ${spritePosition.x}\n  y: ${spritePosition.y}\n}`}</pre>
-                </div>
-                <div>
-                    <button className="button" onClick={addSprite}>Add New Sprite</button>
+                    <div>
+                        <button className="button" onClick={changeScene}>Change Scene</button>
+                    </div>
+                    <div>
+                        <button disabled={canMoveSprite} className="button" onClick={moveSprite}>Toggle Movement</button>
+                    </div>
+                    <div className="spritePosition">Sprite Position:
+                        <pre>{`{\n  x: ${spritePosition.x}\n  y: ${spritePosition.y}\n}`}</pre>
+                    </div>
+                    <div>
+                        <button className="button" onClick={addSprite}>Add New Sprite</button>
+                    </div>
                 </div>
             </div>
         </div>
