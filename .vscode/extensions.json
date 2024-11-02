@@ -1,6 +1,13 @@
 {
   "recommendations": [
     "dbaeumer.vscode-eslint",
-    "bradlc.vscode-tailwindcss"
+    "bradlc.vscode-tailwindcss",
+    "huibizhang.codesnap-plus",
+    "streetsidesoftware.code-spell-checker",
+    "usernamehw.errorlens",
+    "dsznajder.es7-react-js-snippets",
+    "christian-kohler.path-intellisense",
+    "wayou.vscode-todo-highlight",
+    "tabnine.tabnine-vscode"
   ]
 }
