@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 export const useHandLandMarker = ({ videoRef, canvasRef }) => {
     const handDetector = useRef(null);
     const streamRef = useRef(null);
-    // const poseCount = useRef(null);
+    const poseCount = useRef(null);
     const [loading, setLoading] = useState(true);
     const [landmarks, setLandmarks] = useState(null);
 
@@ -23,7 +23,7 @@ export const useHandLandMarker = ({ videoRef, canvasRef }) => {
 
         const createDetector = async () => {
             try {
-                const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm');
+                const vision = await FilesetResolver.forVisionTasks('/wasm');
                 const detector = await HandLandmarker.createFromOptions(vision, {
                     baseOptions: {
                         modelAssetPath: '/models/hand_landmarker.task',
@@ -46,7 +46,7 @@ export const useHandLandMarker = ({ videoRef, canvasRef }) => {
             const renderHands = async () => {
                 if (!handDetector.current) return;
                 const results = await handDetector.current.detectForVideo(videoRef.current, Date.now());
-                // poseCount.current++;
+                poseCount.current++;
                 setLandmarks(results?.landmarks || []);
                 ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
                 if (results?.landmarks) {
@@ -83,14 +83,14 @@ export const useHandLandMarker = ({ videoRef, canvasRef }) => {
             }
         };
     }, [videoRef, canvasRef]);
-    // useEffect(() => {
-    //     const intervalId = setInterval(() => {
-    //         console.log("Poses detected in last second:", poseCount.current);
-    //         poseCount.current = 0;
-    //     }, 1000);
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            console.log("Poses detected in last second:", poseCount.current);
+            poseCount.current = 0;
+        }, 1000);
 
-    //     return () => clearInterval(intervalId);
-    // }, []);
+        return () => clearInterval(intervalId);
+    }, []);
 
     return { loading, landmarks };
 };

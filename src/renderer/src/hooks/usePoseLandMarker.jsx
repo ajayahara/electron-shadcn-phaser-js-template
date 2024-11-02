@@ -26,7 +26,7 @@ export const usePoseLandMarker = ({ videoRef, canvasRef }) => {
 
         const createDetector = async () => {
             try {
-                const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm');
+                const vision = await FilesetResolver.forVisionTasks('/wasm');
                 const detector = await PoseLandmarker.createFromOptions(vision, {
                     baseOptions: {
                         modelAssetPath: '/models/pose_landmarker_full.task',
