@@ -1,24 +1,22 @@
 import { PoseLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 import { useEffect, useRef, useState } from 'react';
 
-export const usePoseLandMarker = ({ videoRef, canvasRef }) => {
+export const usePoseLandMarker = () => {
     const poseDetector = useRef(null);
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
+    const streamRef = useRef(null);
     const poseCount = useRef(0);
-    const timeStampRef = useRef(-1);
-    const [loading, setLoading] = useState(true);
     const [landmarks, setLandmarks] = useState(null);
-    let animationFrameId = null;
+    const timestampRef=useRef(-1);
 
     useEffect(() => {
-        let stream = null;
-
+        if (!videoRef.current || !canvasRef.current) return;
         const startCamera = async () => {
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
-                    await videoRef.current.play();
-                }
+                streamRef.current = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoRef.current.srcObject = streamRef.current;
+                await videoRef.current.play();
             } catch (error) {
                 console.error("Error accessing camera:", error);
             }
@@ -29,33 +27,26 @@ export const usePoseLandMarker = ({ videoRef, canvasRef }) => {
                 const vision = await FilesetResolver.forVisionTasks('/wasm');
                 const detector = await PoseLandmarker.createFromOptions(vision, {
                     baseOptions: {
-                        modelAssetPath: '/models/pose_landmarker_full.task',
+                        modelAssetPath: '/models/pose_landmarker_lite.task',
                         delegate: 'GPU'
                     },
                     runningMode: 'VIDEO'
                 });
                 poseDetector.current = detector;
-                setLoading(false);
             } catch (error) {
                 console.error("Error creating pose detector:", error);
             }
         };
 
         const detectPoses = async () => {
-            if (!videoRef.current || !canvasRef.current || !poseDetector.current) return;
-
+            if (!poseDetector.current) return;
             const ctx = canvasRef.current.getContext('2d');
-
             const renderPoses = async () => {
-                if (!poseDetector.current || videoRef.current.readyState < 2) {
-                    animationFrameId = requestAnimationFrame(renderPoses);
-                    return;
-                }
-                timeStampRef.current++;
+                if (!poseDetector.current) return;
                 poseCount.current++;
-                const results = await poseDetector.current.detectForVideo(videoRef.current, timeStampRef.current);
+                timestampRef.current++;
+                const results = await poseDetector.current.detectForVideo(videoRef.current, timestampRef.current);
                 setLandmarks(results?.landmarks || []);
-
                 ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
                 if (results?.landmarks) {
@@ -63,12 +54,12 @@ export const usePoseLandMarker = ({ videoRef, canvasRef }) => {
                         poseLandmarks.forEach((landmark) => {
                             ctx.beginPath();
                             ctx.arc(landmark.x * canvasRef.current.width, landmark.y * canvasRef.current.height, 5, 0, 2 * Math.PI);
-                            ctx.fillStyle = 'blue';
+                            ctx.fillStyle = 'yellow';
                             ctx.fill();
                         });
                     });
                 }
-                animationFrameId = requestAnimationFrame(renderPoses);
+                requestAnimationFrame(renderPoses);
             };
             renderPoses();
         };
@@ -102,5 +93,5 @@ export const usePoseLandMarker = ({ videoRef, canvasRef }) => {
 
         return () => clearInterval(intervalId);
     }, []);
-    return { loading, landmarks };
+    return { videoRef, canvasRef, landmarks };
 };

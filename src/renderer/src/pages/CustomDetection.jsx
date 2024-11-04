@@ -1,12 +1,12 @@
-import { usePoseLandMarker } from '@/hooks/usePoseLandMarker';
 import React, { useRef } from 'react';
-import { useHandLandMarker } from '../hooks/useHandLandMarker';
+import { usePoseLandMarker } from '@/hooks/usePoseLandMarker';
+// import { useHandLandMarker } from '@/hooks/useHandLandMarker';
+// import { useFaceLandMarker } from '@/hooks/useFaceLandMarker';
 
 export const CustomDetection = () => {
-    const videoRef = useRef(null);
-    const canvasRef = useRef(null);
-    const { landmarks } = useHandLandMarker({ videoRef, canvasRef });
-    // const { landmarks } = usePoseLandMarker({ videoRef, canvasRef });
+    // const { videoRef, canvasRef, landmarks } = useHandLandMarker();
+    const { videoRef, canvasRef, landmarks } = usePoseLandMarker();
+    // const { videoRef, canvasRef, landmarks } = useFaceLandMarker({ videoRef, canvasRef });
 
     return (
         <div className='w-full h-full flex flex-col items-center justify-center text-white'>

@@ -1,21 +1,21 @@
 import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 import { useEffect, useRef, useState } from 'react';
 
-export const useHandLandMarker = ({ videoRef, canvasRef }) => {
+export const useHandLandMarker = () => {
     const handDetector = useRef(null);
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
     const streamRef = useRef(null);
     const poseCount = useRef(null);
-    const [loading, setLoading] = useState(true);
     const [landmarks, setLandmarks] = useState(null);
 
     useEffect(() => {
+        if (!videoRef.current || !canvasRef.current) return;
         const startCamera = async () => {
             try {
                 streamRef.current = await navigator.mediaDevices.getUserMedia({ video: true });
-                if (videoRef.current) {
-                    videoRef.current.srcObject = streamRef.current;
-                    await videoRef.current.play();
-                }
+                videoRef.current.srcObject = streamRef.current;
+                await videoRef.current.play();
             } catch (error) {
                 console.error("Error accessing camera:", error);
             }
@@ -31,17 +31,16 @@ export const useHandLandMarker = ({ videoRef, canvasRef }) => {
                     },
                     runningMode: 'VIDEO',
                     numPoses: 1,
-                    numHands: 2
+                    numHands: 1 // change the value to 2 for detecting two hands
                 });
                 handDetector.current = detector;
-                setLoading(false);
             } catch (error) {
                 console.error("Error creating hand detector:", error);
             }
         };
 
         const detectHands = async () => {
-            if (!videoRef.current || !canvasRef.current || !handDetector.current) return;
+            if (!handDetector.current) return;
             const ctx = canvasRef.current.getContext('2d');
             const renderHands = async () => {
                 if (!handDetector.current) return;
@@ -54,7 +53,7 @@ export const useHandLandMarker = ({ videoRef, canvasRef }) => {
                         handLandmarks.forEach((landmark) => {
                             ctx.beginPath();
                             ctx.arc(landmark.x * canvasRef.current.width, landmark.y * canvasRef.current.height, 5, 0, 2 * Math.PI);
-                            ctx.fillStyle = 'blue';
+                            ctx.fillStyle = 'yellow';
                             ctx.fill();
                         });
                     });
@@ -92,5 +91,5 @@ export const useHandLandMarker = ({ videoRef, canvasRef }) => {
         return () => clearInterval(intervalId);
     }, []);
 
-    return { loading, landmarks };
+    return { videoRef, canvasRef, landmarks };
 };
